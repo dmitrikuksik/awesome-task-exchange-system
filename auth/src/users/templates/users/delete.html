@@ -1,0 +1,24 @@
+{% extends 'auth/base.html' %}
+
+{% block title %}Delete{% endblock %}
+
+{% block header %}Delete{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-6">
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="id_user_id" class="form-label">Are you sure you want to delete user(id={{ user_id }})?</label>
+                    <input type="hidden" name="user_id" class="form-control" id="id_user_id" value="{{ user_id }}">
+                </div>
+                <input type="submit" value="Delete" class="btn btn-danger">                
+            </form>    
+
+            {{ form.errors }}
+        </div>
+        <div class="col-6"></div>
+    </div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'auth/base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block header %}Register{% endblock %}
+
+{% block content %}
+    
+    <div class="row">
+        <div class="col-6">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="id_email" class="form-label">Email</label>
+                    <input type="email" name="username" class="form-control" id="id_username" aria-describedby="emailHelp">
+                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="id_password" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" id="id_password">
+                </div>
+                <input type="submit" value="Submit" class="btn btn-primary">
+            </form>    
+
+            {{ form.errors }}
+        </div>
+        <div class="col-6"></div>
+    </div>
+{% endblock %}

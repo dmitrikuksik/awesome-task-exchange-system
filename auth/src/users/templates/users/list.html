@@ -1,0 +1,51 @@
+{% extends 'auth/base.html' %}
+
+{% block title %}Users{% endblock %}
+
+{% block header %}Users{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-9"></div>
+        <div class="col-2">
+            <b>{{ user.email }}</b>
+        </div>
+        <div class="col-1">
+            <a href="{% url 'users:logout' %}" class="btn btn-primary">Logout</a>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Public ID</th>
+                <th scope="col">Full Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Role</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in users %}
+                <tr>
+                    <th scope="row">{{ u.id }}</th>
+                    <td>{{ u.public_id }}</td>
+                    <td>{{ u.first_name }} {{ u.last_name }}</td>
+                    <td>{{ u.email }}</td>
+                    <td>{{ u.role_display }}</td>
+                    <td>
+                        <a href="{% url 'users:edit' user_id=u.id %}" class="btn btn-secondary btn-sm {% if not user.is_admin %}disabled{% endif %}">
+                            <i class="bi-pencil-fill"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="{% url 'users:delete' user_id=u.id %}" class="btn btn-danger btn-sm {% if not user.is_admin %}disabled{% endif %}">
+                            <i class="bi-x-circle-fill"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

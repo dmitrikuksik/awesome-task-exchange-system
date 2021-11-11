@@ -1,0 +1,36 @@
+{% extends 'auth/base.html' %}
+
+{% block title %}Edit{% endblock %}
+
+{% block header %}Edit{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-6">
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="id_first_name" class="form-label">First name</label>
+                    <input type="text" name="first_name" class="form-control" id="id_first_name" >
+                </div>
+                <div class="mb-3">
+                    <label for="id_last_name" class="form-label">Last name</label>
+                    <input type="text" name="last_name" class="form-control" id="id_last_name">
+                </div>
+                <div class="mb-3">
+                    <label for="id_role" class="form-label">User role</label>
+                    <select name="role" id="id_role" class="form-select">
+                        {% for value, name in role_choices %}
+                            <option value={{ value }}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>            
+                <input type="submit" value="Save" class="btn btn-primary">
+            </form>
+            
+            {{ form.errors }}
+        </div>
+        <div class="col-6"></div>
+    </div>
+{% endblock %}
