@@ -15,15 +15,21 @@ class UserLoginRequiredMixin(LoginRequiredMixin):
         return reverse('users:login')
 
 
-class AdminPermissionMixin:
-    def get(self, *args, **kwargs):
+class AdminPermissionsMixin:
+    permissions_exception = PermissionDenied(
+        'Only user with admin role can delete other users.'
+    )
+
+    def check_permissions(self):
         if self.request.user.role != UserRole.ADMIN:
-            raise PermissionDenied('Only user with admin role can delete other users.')
+            raise self.permissions_exception
+
+    def get(self, *args, **kwargs):
+        self.check_permissions()
         return super().get(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        if self.request.user.role != UserRole.ADMIN:
-            raise PermissionDenied('Only user with admin role can delete other users.')
+        self.check_permissions()
         return super().post(request, *args, **kwargs)
 
 
@@ -61,7 +67,7 @@ class UserListView(UserLoginRequiredMixin, TemplateView):
         return context
 
 
-class UserDeleteView(UserLoginRequiredMixin, AdminPermissionMixin, FormView):
+class UserDeleteView(UserLoginRequiredMixin, AdminPermissionsMixin, FormView):
     form_class = UserDeleteForm
     template_name = 'users/delete.html'
 
@@ -86,7 +92,7 @@ class UserDeleteView(UserLoginRequiredMixin, AdminPermissionMixin, FormView):
         return context
 
 
-class UserEditView(UserLoginRequiredMixin, AdminPermissionMixin, FormView):
+class UserEditView(UserLoginRequiredMixin, AdminPermissionsMixin, FormView):
     form_class = UserEditForm
     template_name = 'users/edit.html'
 
