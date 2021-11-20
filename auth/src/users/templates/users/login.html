@@ -27,7 +27,8 @@
                         New here? <a href="{% url 'users:register' %}">Click link to create account</a>
                     </div>
                 </div>
-                
+
+                <input type="hidden" name="next" value="{{ next }}" />
             </form>    
 
             {{ form.errors }}

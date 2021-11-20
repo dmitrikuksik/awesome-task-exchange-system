@@ -7,6 +7,7 @@ from users.views import (
     UserRegisterView,
     UserLoginView,
     UserLogoutView,
+    UserRetrieveAPIView,
 )
 
 
@@ -27,4 +28,5 @@ urlpatterns = [
     path('<int:user_id>/edit/', UserEditView.as_view(), name='edit'),
     path('<int:user_id>/delete/', UserDeleteView.as_view(), name='delete'),
     path('', UserListView.as_view(), name='list'),
+    path('me/', UserRetrieveAPIView.as_view(), name='me'),
 ]

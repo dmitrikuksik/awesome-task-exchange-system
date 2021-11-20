@@ -1,18 +1,18 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.core.exceptions import PermissionDenied, ValidationError
+from django.core.exceptions import PermissionDenied
 from django.views.generic.base import TemplateView
 from django.views.generic.edit import FormView
 from django.shortcuts import get_object_or_404
 from django.urls import reverse, reverse_lazy
 
+from rest_framework import generics, permissions
+
+from oauth2_provider.models import AccessToken
+
 from users.forms import UserEditForm, UserRegisterForm, UserDeleteForm
 from users.models import User, UserRole
-
-
-class UserLoginRequiredMixin(LoginRequiredMixin):
-    def get_login_url(self):
-        return reverse('users:login')
+from users.serializers import UserSerializer
 
 
 class AdminPermissionsMixin:
@@ -36,9 +36,6 @@ class AdminPermissionsMixin:
 class UserLoginView(LoginView):
     template_name = 'users/login.html'
 
-    def get_success_url(self):
-        return reverse('users:list')
-
 
 class UserLogoutView(LogoutView):
     next_page = reverse_lazy('users:login')
@@ -58,7 +55,7 @@ class UserRegisterView(FormView):
         return super().form_valid(form)
 
 
-class UserListView(UserLoginRequiredMixin, TemplateView):
+class UserListView(LoginRequiredMixin, TemplateView):
     template_name = 'users/list.html'
 
     def get_context_data(self, **kwargs):
@@ -67,7 +64,7 @@ class UserListView(UserLoginRequiredMixin, TemplateView):
         return context
 
 
-class UserDeleteView(UserLoginRequiredMixin, AdminPermissionsMixin, FormView):
+class UserDeleteView(LoginRequiredMixin, AdminPermissionsMixin, FormView):
     form_class = UserDeleteForm
     template_name = 'users/delete.html'
 
@@ -92,7 +89,7 @@ class UserDeleteView(UserLoginRequiredMixin, AdminPermissionsMixin, FormView):
         return context
 
 
-class UserEditView(UserLoginRequiredMixin, AdminPermissionsMixin, FormView):
+class UserEditView(LoginRequiredMixin, AdminPermissionsMixin, FormView):
     form_class = UserEditForm
     template_name = 'users/edit.html'
 
@@ -114,3 +111,22 @@ class UserEditView(UserLoginRequiredMixin, AdminPermissionsMixin, FormView):
         context = super().get_context_data(**kwargs)
         context.update(role_choices=UserRole.choices)
         return context
+
+
+class UserRetrieveAPIView(generics.RetrieveAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = UserSerializer
+
+    @staticmethod
+    def get_authorization_token(request):
+        token = request.headers.get('Authorization', '')
+        if token:
+            token = token.lstrip('Bearer ')
+        return token
+
+    def get_object(self):
+        token = self.get_authorization_token(self.request)
+        print(token)
+        user = User.objects.get(oauth2_provider_accesstoken__token=token)
+        print(user)
+        return user

@@ -30,17 +30,20 @@ DJANGO_APPS = [
 THIRD_PARTY_APPS = [
     'oauth2_provider',
     'corsheaders',
+    'rest_framework',
 ]
 
 LOCAL_APPS = [
     'users',
 ]
 
-
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 
 AUTH_USER_MODEL = 'users.User'
+
+LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = '/users/'
 
 
 MIDDLEWARE = [
@@ -107,6 +110,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+    )
+}
 
 
 # Internationalization
